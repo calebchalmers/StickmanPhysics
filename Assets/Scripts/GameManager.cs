@@ -4,7 +4,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public LayerMask physicsObjectLayerMask;
     public GameObject[] typePrefabs;
+    public GameObject pinPrefab;
 
     private GameObject selectedPrefab;
 
@@ -24,7 +26,19 @@ public class GameManager : MonoBehaviour
             Instantiate(selectedPrefab, mousePos, Quaternion.identity);
         }
 
-        if(Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            GameObject clone = (GameObject)Instantiate(pinPrefab, mousePos, Quaternion.identity);
+
+            // Attach to object if one is found under cursor
+            RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero, Mathf.Infinity, physicsObjectLayerMask);
+            if(hit.rigidbody != null)
+            {
+                clone.GetComponent<HingeJoint2D>().connectedBody = hit.rigidbody;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
@@ -37,7 +51,7 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             float range = 10f;
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(mousePos, range);
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(mousePos, range, physicsObjectLayerMask);
             foreach (var col in colliders)
             {
                 Rigidbody2D rigidbody = col.attachedRigidbody;

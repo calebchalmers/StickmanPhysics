@@ -4,6 +4,8 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Grab : MonoBehaviour
 {
+    public LayerMask layerMask;
+
     private Rigidbody2D rb;
     private HingeJoint2D joint;
 
@@ -33,7 +35,7 @@ public class Grab : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(new Vector3(mousePos.x, mousePos.y, -10f), Vector3.forward);
             Rigidbody2D hitBody = hit.rigidbody;
 
-            if(hitBody != null/* && hitBody.gameObject.layer == LayerMask.NameToLayer("Stickman")*/)
+            if(hitBody != null && hitBody.gameObject.layer == LayerMask.NameToLayer("PhysicsObject"))
             {
                 dragging = true;
                 joint.connectedBody = hitBody;
